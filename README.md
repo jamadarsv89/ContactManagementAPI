@@ -16,3 +16,4 @@ To launch the app:
  8. Followed Test Driven Developement
  9. Used Swagger (Open API) for documentation of API.
  10. Used Automapper for mapping objects.
+ 11. Used Model validation.

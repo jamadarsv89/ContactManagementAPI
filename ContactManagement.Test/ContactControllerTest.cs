@@ -32,6 +32,8 @@ namespace ContactManagement.Test
         [Test]
         public void GetAllContact_Success()
         {
+            _loggerManager.Setup(l => l.LogInformation(It.IsAny<string>())).Verifiable();
+
             _contactService.Setup(s => s.GetAllContacts()).Returns(
                 new List<ContactDTO>() { 
                     new ContactDTO { FirstName = "Abc", Status = ContactStatusDTO.Active},
@@ -58,6 +60,8 @@ namespace ContactManagement.Test
         [Test]
         public void GetAllContact_Failed()
         {
+            _loggerManager.Setup(l => l.LogInformation(It.IsAny<string>())).Verifiable();
+
             _contactService.Setup(s => s.GetAllContacts()).Returns((ICollection<ContactDTO>)null);
 
             _mapper.Setup(m => m.Map<ICollection<ContactAPIModel>>(It.IsAny<ICollection<object>>())).Returns((ICollection<ContactAPIModel>)null);
@@ -71,7 +75,9 @@ namespace ContactManagement.Test
         [TearDown]
         public void CleanUp()
         {
-
+            _contactService = null;
+            _mapper = null;
+            _loggerManager = null;
         }
     }
 }

@@ -3,6 +3,7 @@ using ContactManagement.API.APIModels;
 using ContactManagement.API.Logger;
 using ContactManagement.Core;
 using ContactManagement.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -38,19 +39,19 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<ContactAPIModel> Get()
+        public ActionResult<IEnumerable<ContactAPIModel>> Get()
         {
             _logger.LogInformation("Begin - Get Contacts");
 
             var response = _mapper.Map<ICollection<ContactAPIModel>>(_contactService.GetAllContacts());
             if(response == null)
             {
-                throw new Exception("Error in Get Contacts");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             _logger.LogInformation("End - Get Contacts");
 
-            return response;
+            return Ok(response);
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace ContactManagement.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public ContactAPIModel Get(int id)
+        public ActionResult<ContactAPIModel> Get(int id)
         {
             _logger.LogInformation("Begin - Get Contact By Id");
 
@@ -75,15 +76,22 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <param name="input"></param>
         [HttpPost]
-        public void Post([FromBody] ContactAPIModel input)
+        public ActionResult Post([FromBody] ContactAPIModel input)
         {
             _logger.LogInformation("Begin - Create Contact");
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var contact = _mapper.Map<ContactDTO>(input);
 
             _contactService.CreateContact(contact);
 
             _logger.LogInformation("End - Create Contact");
+
+            return StatusCode(StatusCodes.Status202Accepted);
         }
 
         /// <summary>
@@ -92,15 +100,20 @@ namespace ContactManagement.API.Controllers
         /// <param name="id"></param>
         /// <param name="input"></param>
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] ContactAPIModel input)
+        public ActionResult Put(int id, [FromBody] ContactAPIModel input)
         {
             _logger.LogInformation("Begin - Update Contact");
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             var contact = _contactService.GetContact(id);
 
             if(contact == null)
             {
-                throw new Exception("Bad request");
+                return BadRequest();
             }
 
             var mappedInput = _mapper.Map<ContactDTO>(input);
@@ -109,6 +122,8 @@ namespace ContactManagement.API.Controllers
             _contactService.UpdateContact(mappedInput);
 
             _logger.LogInformation("End - Update Contact");
+
+            return StatusCode(StatusCodes.Status202Accepted);
         }
 
         /// <summary>
@@ -116,7 +131,7 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
             _logger.LogInformation("Begin - Delete Contact");
 
@@ -124,12 +139,14 @@ namespace ContactManagement.API.Controllers
 
             if (contact == null)
             {
-                throw new Exception("Bad request");
+                return BadRequest();
             }
 
             _contactService.DeleteContact(id);
 
             _logger.LogInformation("End - Delete Contact");
+
+            return StatusCode(StatusCodes.Status202Accepted);
         }
     }
 }
