@@ -1,18 +1,19 @@
 ﻿using ContactManagement.Core;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ContactManagement.Services
 {
     public interface IContactManagementService
     {
-        ICollection<ContactDTO> GetAllContacts();
+        Task<ICollection<ContactDTO>> GetAllContacts();
 
-        void CreateContact(ContactDTO contact);
+        Task CreateContact(ContactDTO contact);
 
-        ContactDTO GetContact(int id);
+        Task<ContactDTO> GetContact(int id);
 
-        void DeleteContact(int id);
+        Task DeleteContact(int id);
 
-        void UpdateContact(ContactDTO contact);
+        Task UpdateContact(ContactDTO contact);
     }
 }

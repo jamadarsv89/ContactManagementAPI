@@ -7,6 +7,7 @@ using ContactManagement.Services;
 using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ContactManagement.Test
 {
@@ -34,12 +35,12 @@ namespace ContactManagement.Test
         {
             _loggerManager.Setup(l => l.LogInformation(It.IsAny<string>())).Verifiable();
 
-            _contactService.Setup(s => s.GetAllContacts()).Returns(
+            _contactService.Setup(s => s.GetAllContacts()).Returns(Task.FromResult<ICollection<ContactDTO>>(
                 new List<ContactDTO>() { 
                     new ContactDTO { FirstName = "Abc", Status = ContactStatusDTO.Active},
                     new ContactDTO { FirstName = "Pqr", Status = ContactStatusDTO.Active},
                     new ContactDTO { FirstName = "Xyz", Status = ContactStatusDTO.Inactive}
-                });
+                }));
 
             _mapper.Setup(m => m.Map<IList<ContactAPIModel>>(It.IsAny<ICollection<ContactStatusDTO>>())).Returns(
                 new List<ContactAPIModel>() {
@@ -62,7 +63,7 @@ namespace ContactManagement.Test
         {
             _loggerManager.Setup(l => l.LogInformation(It.IsAny<string>())).Verifiable();
 
-            _contactService.Setup(s => s.GetAllContacts()).Returns((ICollection<ContactDTO>)null);
+            _contactService.Setup(s => s.GetAllContacts()).Returns(Task.FromResult((ICollection<ContactDTO>)null));
 
             _mapper.Setup(m => m.Map<ICollection<ContactAPIModel>>(It.IsAny<ICollection<object>>())).Returns((ICollection<ContactAPIModel>)null);
 

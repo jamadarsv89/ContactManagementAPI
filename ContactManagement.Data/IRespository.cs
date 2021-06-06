@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ContactManagement.Data
 {
     public interface IRepository<T> where T : class
     {
-        ICollection<T> GetAll();
+        Task<ICollection<T>> GetAll();
 
-        T GetById(object id);
+        Task<T> GetById(object id);
 
-        void Insert(T entity);
+        Task Insert(T entity);
 
         void Update(T entity);
 
-        void Delete(object i);
+        Task Delete(object i);
 
-        void Save();
+        Task Save();
     }
 }

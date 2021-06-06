@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ContactManagement.Data
 {
@@ -15,30 +16,31 @@ namespace ContactManagement.Data
             this._context = context;
             table = context.Set<T>();
         }
-        public virtual ICollection<T> GetAll()
+        public async virtual Task<ICollection<T>> GetAll()
         {
-            return table.ToList();
+            return await table.ToListAsync();
         }
-        public virtual T GetById(object id)
+        public async virtual Task<T> GetById(object id)
         {
-            return table.Find(id);
+            return await table.FindAsync(id);
         }
-        public virtual void Insert(T obj)
+        public async virtual Task Insert(T obj)
         {
-            table.Add(obj);
+            await table.AddAsync(obj);
         }
         public virtual void Update(T obj)
         {
             table.Attach(obj);
             _context.Entry(obj).State = EntityState.Modified;
         }
-        public virtual void Delete(object id)
+        public async virtual Task Delete(object id)
         {
-            T existing = table.Find(id);
+            T existing = await table.FindAsync(id);
             table.Remove(existing);
-        }public virtual void Save()
+        }
+        public async virtual Task Save()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

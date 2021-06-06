@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -39,11 +40,11 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult<IEnumerable<ContactAPIModel>> Get()
+        public async Task<ActionResult<IEnumerable<ContactAPIModel>>> Get()
         {
             _logger.LogInformation("Begin - Get Contacts");
 
-            var response = _mapper.Map<ICollection<ContactAPIModel>>(_contactService.GetAllContacts());
+            var response = _mapper.Map<ICollection<ContactAPIModel>>(await _contactService.GetAllContacts());
             if(response == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
@@ -60,11 +61,11 @@ namespace ContactManagement.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public ActionResult<ContactAPIModel> Get(int id)
+        public async Task<ActionResult<ContactAPIModel>> Get(int id)
         {
             _logger.LogInformation("Begin - Get Contact By Id");
 
-            var response = _mapper.Map<ContactAPIModel>(_contactService.GetContact(id));
+            var response = _mapper.Map<ContactAPIModel>(await _contactService.GetContact(id));
 
             _logger.LogInformation("End - Get Contact By Id");
 
@@ -76,7 +77,7 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <param name="input"></param>
         [HttpPost]
-        public ActionResult Post([FromBody] ContactAPIModel input)
+        public async Task<ActionResult> Post([FromBody] ContactAPIModel input)
         {
             _logger.LogInformation("Begin - Create Contact");
 
@@ -87,7 +88,7 @@ namespace ContactManagement.API.Controllers
 
             var contact = _mapper.Map<ContactDTO>(input);
 
-            _contactService.CreateContact(contact);
+            await _contactService.CreateContact(contact);
 
             _logger.LogInformation("End - Create Contact");
 
@@ -100,7 +101,7 @@ namespace ContactManagement.API.Controllers
         /// <param name="id"></param>
         /// <param name="input"></param>
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] ContactAPIModel input)
+        public async Task<ActionResult> Put(int id, [FromBody] ContactAPIModel input)
         {
             _logger.LogInformation("Begin - Update Contact");
 
@@ -109,7 +110,7 @@ namespace ContactManagement.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var contact = _contactService.GetContact(id);
+            var contact = await _contactService.GetContact(id);
 
             if(contact == null)
             {
@@ -119,7 +120,7 @@ namespace ContactManagement.API.Controllers
             var mappedInput = _mapper.Map<ContactDTO>(input);
             mappedInput.Id = id;
 
-            _contactService.UpdateContact(mappedInput);
+            await _contactService.UpdateContact(mappedInput);
 
             _logger.LogInformation("End - Update Contact");
 
@@ -131,7 +132,7 @@ namespace ContactManagement.API.Controllers
         /// </summary>
         /// <param name="id"></param>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             _logger.LogInformation("Begin - Delete Contact");
 
@@ -142,7 +143,7 @@ namespace ContactManagement.API.Controllers
                 return BadRequest();
             }
 
-            _contactService.DeleteContact(id);
+            await _contactService.DeleteContact(id);
 
             _logger.LogInformation("End - Delete Contact");
 

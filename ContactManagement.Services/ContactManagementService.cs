@@ -4,6 +4,7 @@ using ContactManagement.Data;
 using ContactManagement.Data.Entity;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ContactManagement.Services
 {
@@ -22,35 +23,35 @@ namespace ContactManagement.Services
             this._mapper = mapper;
             this._repository = repository;
         }
-        public void CreateContact(ContactDTO contact)
+        public async Task CreateContact(ContactDTO contact)
         {
-            _repository.Insert(_mapper.Map<Contact>(contact));
+            await _repository.Insert(_mapper.Map<Contact>(contact));
 
-            _repository.Save();
+            await _repository.Save();
         }
 
-        public void DeleteContact(int id)
+        public async Task DeleteContact(int id)
         {
-            _repository.Delete(id);
+            await _repository.Delete(id);
 
-            _repository.Save();
+            await _repository.Save();
         }
 
-        public ICollection<ContactDTO> GetAllContacts()
+        public async Task<ICollection<ContactDTO>> GetAllContacts()
         {
-            return _mapper.Map<ICollection<ContactDTO>>(_repository.GetAll());
+            return _mapper.Map<ICollection<ContactDTO>>(await _repository.GetAll());
         }
 
-        public ContactDTO GetContact(int id)
+        public async Task<ContactDTO> GetContact(int id)
         {
-            return _mapper.Map<ContactDTO>(_repository.GetById(id));
+            return _mapper.Map<ContactDTO>(await _repository.GetById(id));
         }
 
-        public void UpdateContact(ContactDTO contact)
+        public async Task UpdateContact(ContactDTO contact)
         {
             _repository.Update(_mapper.Map<Contact>(contact));
 
-            _repository.Save();
+            await _repository.Save();
         }
     }
 }
