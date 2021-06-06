@@ -17,3 +17,4 @@ To launch the app:
  9. Used Swagger (Open API) for documentation of API.
  10. Used Automapper for mapping objects.
  11. Used Model validation.
+ 12. Used Async Await programming
